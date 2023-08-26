@@ -1,7 +1,6 @@
-
-
 import heapq
 import sys
+
 INF = 1e10
 input = sys.stdin.readline
 
@@ -14,12 +13,12 @@ def dijkstra(start):
         d, now = heapq.heappop(q)
         if dis[now] < d:
             continue
-        for x in graph[now]:
-            cost = d + x[1] 
-            if cost < distance[x[0]]:
-                distance[x[0]] = cost
-                heapq.heappush(q, [cost, x[0]])
-
+        for v, w in graph[now]:
+            cost = d + w
+            if cost < dis[v]:
+                dis[v] = cost
+                heapq.heappush(q, (cost, v))
+    return dis
 
 n=int(input())
 a,b,c=map(int,input().split())
@@ -30,17 +29,17 @@ for _ in range(m):
     graph[d].append((e, w))
     graph[e].append((d, w))
 
-maxs=-INF
-ans=0
-totalDist = [INF for _ in range(n+1)] # total, min
-for i, x in enumerate([a, b, c]):
-    distance = [INF for _ in range(n+1)]
-    dijkstra(x)
-    for j in range(1, n+1):
-        totalDist[j] = min(totalDist[j], distance[j])
-result = 1
-for i in range(2, n+1):
-    if totalDist[result] < totalDist[i]:
-        result = i
-print(result)
+dis_a = dijkstra(a)
+dis_b = dijkstra(b)
+dis_c = dijkstra(c)
 
+max_distance = -INF
+answer = 0
+
+for i in range(1, n+1):
+    min_distance = min(dis_a[i], dis_b[i], dis_c[i])
+    if min_distance > max_distance:
+        max_distance = min_distance
+        answer = i
+
+print(answer)
